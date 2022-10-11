@@ -1,32 +1,28 @@
 # GetRecipes
+<a href="https://get-recipes-eight.vercel.app/" target="_blank"><img src="./src/assets/images/print-get-recipes.png" alt="Recipes Page Preview"/></a>
 
-## CheckList
+[>>>>>  INSTALATION FILE HERE  <<<<<](./INSTALATION.md)
 
 ### Home (Page)
 
 <b>Cabeçalho:</b>
-- [ ]  Logo (img)
-- [ ]  Adicionar Receitas (button)
+- [x]  Logo (img)
+- [x]  Adicionar Receitas (button)
 
 <b>Barra de Pesquisa</b>
-- [ ] Buscar receitas (input)
-- [ ] Pesquisar (button)
+- [x] Buscar receitas (input)
+- [x] Pesquisar (button)
 
 <b>Cards de Receitas:</b>
-- [ ] Título da Receita (h2)	
-- [ ] Imagem da Comida (img)
-- [ ] Tempo de preparo (icon + span) 
-- [ ] Porções (icon + span)
-- [ ] Resumo (p)
-- [ ] Ver receita (button)
+- [x] Título da Receita (h2)	
+- [x] Imagem da Comida (img)
+- [x] Tempo de preparo (icon + span) 
+- [x] Porções (icon + span)
+- [x] Resumo (p)
+- [x] Ver receita (button)
 
 
-### Receita: (Page)
-
-<a href="https://get-recipes-eight.vercel.app/" target="_blank"><img src="./src/assets/images/print-get-recipes.png" alt="Recipes Page Preview"/></a>
-
-[INSTALATION FILE](./INSTALATION.md)
-
+<b> Receita:</b> (Page)
 - [ ] Voltar (button)
 - [ ] Titulo da receita (h2)
 - [ ] Imagem da receita (img)
@@ -37,7 +33,6 @@
 
 
 <b>Nova Receita:</b> (Form)
-
 - [ ] Campo Titulo da receita (input)
 - [ ] Imagem da Comida (input)
 - [ ] Resumo (input)
@@ -52,4 +47,4 @@
 - [ ] Cancelar  (button)
 
 <b>Rodapé:</b>
-- [ ]  Créditos (p)
+- [x]  Créditos (p)
