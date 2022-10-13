@@ -1,7 +1,7 @@
 <template>
   <div class="recipe-component">
     <div class="new-recipe-dialog">
-      <div class="dialog-form">       
+      <div class="dialog-form">
         <h2>Create a new</h2>
         <form @submit.prevent="newRecipe">
           <input v-model="title" type="text" placeholder="Title">
@@ -31,7 +31,7 @@ export default {
     return {
       title: '',
       // this is the default image until integrated with a storage service
-      image: '', 
+      image: '',
       description: '',
       ingredients: '',
       steps: '',
@@ -41,9 +41,8 @@ export default {
   },
 
   methods: {
-    close(event) {
+    close() {
       this.$emit('close');
-      console.log(event)
     },
 
     newRecipe() {
@@ -57,9 +56,17 @@ export default {
           preptime: this.preptime,
           cooktime: this.cooktime
         })
-        .then((response) => {
-          response ? window.location.reload() : console.log('error')
-          // response ? this.$emit('close') : console.log('error')
+        .then(() => {
+          axios
+          .get('/recipes')
+          .then((response) => {
+            this.$store.commit('SET_RECIPES', response.data)
+            this.recipes = this.$store.state.recipes
+            response ? this.$emit('close') : console.log('error')
+            })
+            .catch((error) => {
+              console.log(error);
+            })
         })
         .catch((error) => {
           console.log(error)
@@ -101,17 +108,21 @@ export default {
 .dialog-form {
   max-width: 450px;
   margin: 0 auto;
+
   h2 {
     text-align: center;
     justify-content: center;
     margin-bottom: 20px;
   }
+
   input {
     @include input-primary;
   }
+
   textarea {
     @include textarea-primary;
   }
+
   .recipe-time {
     display: flex;
     justify-content: space-evenly;
@@ -124,12 +135,15 @@ export default {
   .recipe-actions {
     display: flex;
     flex-direction: column-reverse;
+
     button {
       margin: 10px 0;
     }
+
     .button-save {
       @include button-primary;
     }
+
     .button-cancel {
       @include button-cancel;
     }

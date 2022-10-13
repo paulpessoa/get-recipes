@@ -32,7 +32,7 @@
       <div class="recipe-card-no-data" v-if="recipes <= 0">
         <img src="@/assets/images/no-data.png" alt="No data" />
       </div>
-      <div v-else class="recipe-card-item" v-for="recipe in $store.state.recipes" :key="recipe.id">
+      <div v-else class="recipe-card-item" v-for="recipe in $store.state.recipes.reverse()" :key="recipe.id">
         <router-link :to="'/recipe/' + recipe.id">
           <img :src="recipe.image" :alt="recipe.title" />
         </router-link>
