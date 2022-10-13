@@ -1,5 +1,5 @@
 # GetRecipes
-<a href="https://get-recipes-eight.vercel.app/" target="_blank"><img src="./src/assets/images/print-get-recipes.png" alt="Recipes Page Preview"/></a>
+<a href="https://get-recipes-eight.vercel.app/" target="_blank"><img src="./src/assets/images/getrecipes.gif" alt="GetRecipes Preview"/></a>
 
 [>>>>>  INSTALATION FILE HERE  <<<<<](./INSTALATION.md)
 
@@ -17,34 +17,33 @@
 - [x] Título da Receita (h2)	
 - [x] Imagem da Comida (img)
 - [x] Tempo de preparo (icon + span) 
-- [x] Porções (icon + span)
+- [x] Tempo cozinhar (icon + span)
 - [x] Resumo (p)
 - [x] Ver receita (button)
 
 
 <b> Receita:</b> (Page)
-- [ ] Voltar (button)
-- [ ] Titulo da receita (h2)
-- [ ] Imagem da receita (img)
-- [ ] Descrição (p)
-- [ ] Ingredientes (ul)
-- [ ] Metodo de preparo (ul)
+- [x] Cancelar (button)
+- [x] Titulo da receita (h2)
+- [x] Imagem da receita (img)
+- [x] Descrição (p)
+- [x] Ingredientes (ul)
+- [x] Instruções (ul)
 - [ ] Botões de compartilhar (icon)
 
 
 <b>Nova Receita:</b> (Form)
-- [ ] Campo Titulo da receita (input)
+- [x] Campo Titulo da receita (input)
 - [ ] Imagem da Comida (input)
-- [ ] Resumo (input)
-- [ ] Porções (input)
-- [ ] Tempo de preparo (input)
-- [ ] Ingredientes (input)
-- [ ] Adicionar Ingrediente (button)
-- [ ] Modo de preparo (input)
-- [ ] Adicionar Etapa  (button)
+- [x] Resumo (input)
+- [x] Tempo de cozimento (input)
+- [x] Tempo de preparo (input)
+- [x] Ingredientes (input)
+- [ ] Instruções (input)
 
-- [ ] Salvar (button)
-- [ ] Cancelar  (button)
+
+- [x] Salvar (button)
+- [x] Cancelar  (button)
 
 <b>Rodapé:</b>
 - [x]  Créditos (p)

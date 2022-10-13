@@ -1,7 +1,10 @@
 $primary-color: #259bb0;
 $secondary-color: #e78200;
-$dark-color: #333333;
-$light-color: #f5f5f5;
+$tertiary-color: #f29214;
+$background-color: #caeef4;
+$dark-color: hsl(0, 0%, 20%);
+$midle-color: #d5d5d5;
+$light-color: #ffffff;
 
 @mixin button-primary() {
   max-height: 40px;
@@ -9,24 +12,55 @@ $light-color: #f5f5f5;
   font-size: 14px;
   border-radius: 4px;
   border: none;
-  background: $primary-color;
+  background: $secondary-color;
   color: $light-color;
   font-weight: bold;
   cursor: pointer;
   transition: ease-in-out 0.15s;
   &:hover {
-    background: $secondary-color;
+    background: $tertiary-color;
     transition: ease-in-out 0.15s;
   }
 }
 
-@mixin input-primary() {
-  width: 300px;
+@mixin button-cancel() {
+  max-height: 40px;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  background: $light-color;
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+  transition: ease-in-out 0.15s;
+  &:hover {
+    background: $midle-color;
+    transition: ease-in-out 0.15s;
+  }
+}
+
+@mixin input-primary(){
+  width: 100%;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  margin: 10px;
+  margin: 10px auto;
   padding: 10px;
+  font-size: 14px;
+  &:focus{
+    background: #ffe89e;
+  }
+}
+
+@mixin textarea-primary(){
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 10px auto;
+  padding: 10px;
+  min-height: 70px;
   font-size: 14px;
   &:focus{
     background: #ffe89e;

@@ -1,51 +1,194 @@
 <template>
-  <div>
-    <div class="recipe-search">
-      <input type="search" placeholder="Search a recipe" v-model="search" @change="search()" />
-      <button>Search</button>
+  <div class="recipe-component">
+
+    <!-- recipe view component -->
+    <div class="recipe-view" v-show="openView">
+      <div class="recipe-dialog">
+        <div class="recipe-view-details">
+          <h2 class="title">{{titleview}}</h2>
+          <img class="image" :src="imageview" :alt="titleview" />
+          <p class="description"><b>Description: </b>{{descriptionview}}</p>
+          <p class="ingredients"><b>Ingredients: </b>{{ingredientsview}}</p>
+          <p class="instructions"><b>Instructions: </b>{{instructionsview}}</p>
+          <p class="recipe-time">
+            <b>Prep:</b> {{ `${preptimeview}min`}}
+            <b>Cook: </b>{{ `${cooktimeview}min`}}
+          </p>
+          <div class="view-actions">
+            <button @click="openView = false">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- recipe search -->
+    <div class="recipe-search">
+      <h2>Find something delicious!</h2>
+      <input type="search" placeholder="Search a recipe" v-model="search" @change="filteredRecipes" />
+    </div>
+
+    <!-- recipes feed -->
     <div class="recipe-card-list">
-      <div class="recipe-card-item" v-for="recipe in recipes" :key="recipe.id">
+      <div class="recipe-card-no-data" v-if="recipes <= 0">
+        <img src="@/assets/images/no-data.png" alt="No data" />
+      </div>
+      <div v-else class="recipe-card-item" v-for="recipe in $store.state.recipes" :key="recipe.id">
         <router-link :to="'/recipe/' + recipe.id">
           <img :src="recipe.image" :alt="recipe.title" />
         </router-link>
-        <h2>{{ recipe.title }}</h2>
-        <p>
-          {{
-          `Prep time: ${recipe.preptime} Cook time: ${recipe.cooktime} Serving: ${recipe.serving}`
-          }}
+        <h2 class="recipe-title">{{ recipe.title}}</h2>
+        <p class="description">{{ recipe.description }} ...</p>
+        <p class="recipe-time">
+          <b>Prep:</b>
+          {{ `${recipe.preptime}min`}}
+          <b>Cook: </b>
+          {{ `${recipe.cooktime}min`}}
         </p>
-        <h4>Description:</h4>
-        <p>{{ recipe.description }}</p>
-
-        <br />
-        <!-- <h4>Ingredients:</h4>
-          <p v-for="ingredient in recipe.ingredients" :key="ingredient.id">
-            {{`${ingredient.name} - ${ingredient.quantity} ${ingredient.unit}`}}
-          </p>
-          <br />
-          
-          <h4>Steps:</h4>
-          <p v-for="step in recipe.steps" :key="step.id">
-            Step {{ step.id }}: {{ step.description }}
-          </p> -->
-
-        <button @click="$router.push('/recipe/' + recipe.id)">
-          View Recipe
-        </button>
+        <button @click="toggleView(recipe)">View Modal</button>
       </div>
     </div>
   </div>
 </template>
 
+<script>
+import axios from "axios";
+
+export default {
+  name: "HeaderComponent",
+  data() {
+    return {
+      openView: false,
+      search: null,
+      recipes: null,
+
+      //view recipe
+      titleview: null,
+      imageview: null,
+      descriptionview: null,
+      ingredientsview: null,
+      instructionsview: null,
+      preptimeview: null,
+      cooktimeview: null,
+    }
+  },
+  methods: {
+    toggleView(recipe) {
+      this.openView = true;
+      this.titleview = recipe.title;
+      this.imageview = recipe.image;
+      this.descriptionview = recipe.description;
+      this.ingredientsview = recipe.ingredients;
+      this.instructionsview = recipe.steps;
+      this.preptimeview = recipe.preptime;
+      this.cooktimeview = recipe.cooktime;
+    },
+    listRecipes() {
+      axios
+        .get('/recipes')
+        .then((response) => {
+          this.$store.commit('SET_RECIPES', response.data)
+          this.recipes = this.$store.state.recipes
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    filteredRecipes() {
+      axios
+        .get(`/recipes?title=like.%25${this.search.toLowerCase()}%25`)
+        .then((response) => {
+          this.$store.commit("SET_RECIPES", response.data)
+          this.recipes = this.$store.state.recipes
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+  },
+  created() {
+    this.listRecipes();
+  },
+  watch: {
+    search() {
+      this.search.length >= 0 ? this.filteredRecipes() : this.listRecipes()
+      this.recipes = this.$store.state.recipes;
+    }
+  }
+}
+</script>
+
 <style lang="scss" scoped>
 @import "@/assets/scss/_reset.scss";
 @import "@/assets/scss/_variables.scss";
 
+.recipe-component {
+  background: $background-color;
+  padding: 30px;
+}
+
+.recipe-view {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.393);
+
+  &>.recipe-dialog {
+    max-width: 600px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2em;
+    background: white;
+    border-radius: 4px;
+
+    .recipe-view-details {
+      .title {
+        margin: 20px;
+        text-transform: capitalize;
+        text-align: center;
+        color: $primary-color;
+      }
+
+      .image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .description,
+      .ingredients,
+      .instructions,
+      .recipe-time {
+        margin: 20px auto;
+        text-align: justify;
+      }
+
+      .recipe-time {
+        text-align: right;
+      }
+
+      .view-actions {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+
+  }
+
+}
+
 .recipe-search {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .recipe-card-list {
@@ -55,7 +198,13 @@
   align-items: center;
 }
 
+.recipe-card-no-data img {
+  margin: 40px auto 80px;
+  max-width: 500px;
+}
+
 .recipe-card-item {
+  background-color: $light-color;
   max-width: 350px;
   height: 500px;
   margin: 20px;
@@ -76,6 +225,23 @@
     object-fit: cover;
     border-radius: 4px
   }
+
+  .recipe-title {
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  .recipe-time {
+    text-align: right;
+  }
+
+  .description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-align: justify
+  }
 }
 
 input {
@@ -86,385 +252,3 @@ button {
   @include button-primary;
 }
 </style>
-
-<script>
-export default {
-  name: "HeaderComponent",
-  data() {
-    return {
-      recipes: [
-        {
-          id: 1,
-          title: "Pasta",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-warak-enab-prato.jpg",
-          serving: 9,
-          preptime: 30,
-          cooktime: 30,
-          ingredients: [
-            {
-              id: 1,
-              name: "Pasta",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Tomato",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Cheese",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "Pizza",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-luqaimat.jpg",
-          ingredients: [
-            {
-              id: 1,
-              name: "Sabonete",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Arroz",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Jornal",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Blablabla klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Cla cla claklsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Fla fla fla sf jdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 3,
-          title: "Churrasco",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-luqaimat.jpg",
-          ingredients: [
-            {
-              id: 1,
-              name: "Sabonete",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Arroz",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Jornal",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Blablabla klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Cla cla claklsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Fla fla fla sf jdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 4,
-          title: "Pasta",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-warak-enab-prato.jpg",
-          serving: 9,
-          preptime: 30,
-          cooktime: 30,
-          ingredients: [
-            {
-              id: 1,
-              name: "Pasta",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Tomato",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Cheese",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 5,
-          title: "Pizza",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-luqaimat.jpg",
-          ingredients: [
-            {
-              id: 1,
-              name: "Sabonete",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Arroz",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Jornal",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Blablabla klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Cla cla claklsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Fla fla fla sf jdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 6,
-          title: "Churrasco",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-luqaimat.jpg",
-          ingredients: [
-            {
-              id: 1,
-              name: "Sabonete",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Arroz",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Jornal",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Blablabla klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Cla cla claklsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Fla fla fla sf jdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 7,
-          title: "Pasta",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-warak-enab-prato.jpg",
-          serving: 9,
-          preptime: 30,
-          cooktime: 30,
-          ingredients: [
-            {
-              id: 1,
-              name: "Pasta",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Tomato",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Cheese",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        },
-        {
-          id: 8,
-          title: "Pizza",
-          description:
-            "Lorem a klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-          image:
-            "https://img.itdg.com.br/tdg/images/blog/uploads/2022/10/comida-do-catar-luqaimat.jpg",
-          ingredients: [
-            {
-              id: 1,
-              name: "Sabonete",
-              quantity: 1,
-              unit: "kg",
-            },
-            {
-              id: 2,
-              name: "Arroz",
-              quantity: 2,
-              unit: "kg",
-            },
-            {
-              id: 3,
-              name: "Jornal",
-              quantity: 1,
-              unit: "kg",
-            },
-          ],
-          steps: [
-            {
-              id: 1,
-              description:
-                "Blablabla klsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 2,
-              description:
-                "Cla cla claklsjdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-            {
-              id: 3,
-              description:
-                "Fla fla fla sf jdlaksj dlkajsdlkasjda sdlaksjdlkas jdlkas dasdas dasdasd",
-            },
-          ],
-        }
-
-      ],
-    };
-  }
-}
-</script>
