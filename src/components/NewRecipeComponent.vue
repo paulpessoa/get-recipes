@@ -86,6 +86,7 @@ export default {
 
 
   &>.new-recipe-dialog {
+    min-width: 360px;
     max-width: 600px;
     position: absolute;
     top: 50%;

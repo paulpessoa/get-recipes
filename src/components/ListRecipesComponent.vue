@@ -135,6 +135,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.393);
 
   &>.recipe-dialog {
+    min-width: 360px;
     max-width: 600px;
     position: absolute;
     top: 50%;
