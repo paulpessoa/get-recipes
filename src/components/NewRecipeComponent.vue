@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       title: '',
-      // this is the default image until integrated with a storage service
       image: '',
       description: '',
       ingredients: '',
@@ -39,16 +38,17 @@ export default {
       cooktime: ''
     }
   },
-
+  
   methods: {
     close() {
       this.$emit('close');
     },
-
+    
     newRecipe() {
       axios
-        .post('/recipes', {
-          title: this.title.toLowerCase(),
+      .post('/recipes', {
+        title: this.title.toLowerCase(),
+          // this is the default image until integrated with a storage service
           image: 'https://apply.sts.net.pk/assets/images/default-upload-image.jpg',
           description: this.description.toLowerCase(),
           ingredients: this.ingredients.toLowerCase(),
