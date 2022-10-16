@@ -33,10 +33,12 @@
         <img src="@/assets/images/no-data.png" alt="No data" />
       </div>
       <div v-else class="recipe-card-item" v-for="recipe in $store.state.recipes" :key="recipe.id">
-        <router-link :to="'/recipe/' + recipe.id">
-          <img :src="recipe.image" :alt="recipe.title" />
+        <router-link @click="recipePage(recipe)" :to="'/recipe/' + recipe.id">
+          <img  :src="recipe.image" :alt="recipe.title" />
         </router-link>
-        <h2 class="recipe-title">{{ recipe.title}}</h2>
+        <router-link class="recipe-title" @click="recipePage(recipe)" :to="'/recipe/' + recipe.id">
+        <h2 >{{ recipe.title}}</h2>
+      </router-link>
         <p class="description">{{ recipe.description }} ...</p>
         <p class="recipe-time">
           <b>Prep:</b>
@@ -44,7 +46,7 @@
           <b>Cook: </b>
           {{ `${recipe.cooktime}min`}}
         </p>
-        <button @click="toggleView(recipe)">View Modal</button>
+        <button class="recipe-details" @click="toggleView(recipe)">View Details</button>
       </div>
     </div>
   </div>
@@ -54,7 +56,7 @@
 import axios from "axios";
 
 export default {
-  name: "HeaderComponent",
+  name: "ListRecipesComponent",
   data() {
     return {
       openView: false,
@@ -72,6 +74,10 @@ export default {
     }
   },
   methods: {
+    recipePage(recipe) {
+      this.$store.commit('ID_RECIPE', recipe)
+      this.$router.push('/recipe/' + recipe.id)
+    },
     toggleView(recipe) {
       this.openView = true;
       this.titleview = recipe.title;
@@ -177,10 +183,7 @@ export default {
         justify-content: center;
       }
     }
-
-
   }
-
 }
 
 .recipe-search {
@@ -228,6 +231,7 @@ export default {
   }
 
   .recipe-title {
+    color: $primary-color;
     text-align: center;
     text-transform: capitalize;
   }
