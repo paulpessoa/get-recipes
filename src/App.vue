@@ -14,5 +14,8 @@ export default {
     HeaderComponent,
     FooterComponent
   }
+  created() {
+    document.title = "GetRecipes - Find something delicious!";
+  },
 }
 </script>
